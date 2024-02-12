@@ -105,6 +105,10 @@
             <div class="col-4">
                 <button type="submit" class="btn btn-primary btn-block">Sign In</button>
             </div>
+
+            <div class="col-4">
+                <a href="{{ url('register') }}" class="btn btn-warning">Register</a>
+            </div>
             <!-- /.col -->
             </div>
         </form>
