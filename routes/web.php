@@ -28,4 +28,10 @@ Route::put('/client/update/{id}', [App\Http\Controllers\ClientController::class,
 Route::delete('/client/delete/{id}', [App\Http\Controllers\ClientController::class, 'delete'])->name('client.delete');
 
 Route::get('/order', [App\Http\Controllers\OrderController::class, 'index'])->name('order');
-
+Route::get('/order/create', [App\Http\Controllers\OrderController::class, 'create'])->name('order.create');
+Route::post('/order/datatables', [App\Http\Controllers\OrderController::class, 'datatables'])->name('order.datatables');
+Route::post('/order/store', [App\Http\Controllers\OrderController::class, 'store'])->name('order.store');
+Route::get('/order/edit/{param}', [App\Http\Controllers\OrderController::class, 'edit'])->name('order.edit');
+Route::put('/order/update/{id}', [App\Http\Controllers\OrderController::class, 'update'])->name('order.update');
+Route::delete('/order/delete/{id}', [App\Http\Controllers\OrderController::class, 'delete'])->name('order.delete');
+Route::get('/order/print', [App\Http\Controllers\OrderController::class, 'print_report'])->name('order.print');

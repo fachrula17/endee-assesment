@@ -77,7 +77,7 @@ class ClientController extends Controller
             'nama_client' => $request->input('client_name', $request->client_name),
             'alamat_client'  => $request->input('client_address', $request->client_address),
             'tgl_mulai_kontrak'        => $request->input('start_contract', $request->start_contract),
-            'tgl_akhir_kontrak'        => $request->input('end_contract', $request->endt_contract)
+            'tgl_akhir_kontrak'        => $request->input('end_contract', $request->end_contract)
         ];
 
         $client = Client::findOrFail($id);

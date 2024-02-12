@@ -26,7 +26,8 @@
 
     <!-- Main content -->
     <section class="content">
-        <a href="{{ route('client.create') }}" class="btn btn-danger mb-3"> <i class="fas fa-plus"></i> Add Client</a>
+        <a href="{{ route('order.create') }}" class="btn btn-danger mb-3"> <i class="fas fa-plus"></i> Add Order</a>
+        <a href="{{ route('order.print') }}" class="btn btn-primary mb-3" target="_blank"> <i class="fas fa-pdf"></i> Import PDF</a>
 
         @if(Session::get('success'))
             <p class="alert alert-success">{{ Session::get('success') }}</p>
@@ -43,9 +44,9 @@
                             <tr>
                                 <th></th>
                                 <th>Client Name</th>
-                                <th>Client Address</th>
-                                <th>Date Start Contract</th>
-                                <th>Date End Contract</th>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>Order Date</th>
                                 <th style="background-color: #ffffff" class="notExport noBulk">Action</th>
                             </tr>
                         </thead>
@@ -69,25 +70,19 @@
 <script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
-    var clientTable;
+    var orderTable;
 
     function datatable_show(){
-        clientTable = $('#table-item').DataTable({
+        orderTable = $('#table-item').DataTable({
             // dom: 'rt<"bottom"i><"dataTable-right"flp><"clear">',
             autoWidth: true,
-            preDrawCallback: function() {
-                let el = $('div.dataTables_filter label');
-                if (!el.parent('form').length) {
-                    el.wrapAll('<form></form>').parent()
-                        .attr('autocomplete', false)
-                        .attr('autofill', false);
-                }
-            },
             processing: true,
             serverSide: true,
             "ajax": {
-                url: "{{ route('client.datatables') }}",
+                url: "{{ route('order.datatables') }}",
                 method: 'POST',
                 'beforeSend': function(request) {
                     request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
@@ -99,6 +94,7 @@
                     }
                 }
             },
+            buttons:  ["pdf"],
             columns: [
                 {
                     data: 'DT_RowIndex',
@@ -111,16 +107,17 @@
                     name: 'nama_client',
                 },
                 {
-                    data: 'alamat_client',
-                    name: 'alamat_client',
+                    data: 'nama_item',
+                    name: 'nama_item',
                 },
                 {
-                    data: 'tgl_mulai_kontrak',
-                    name: 'tgl_mulai_kontrak',
+                    data: 'harga_item',
+                    name: 'harga_item',
+                    render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp ' )
                 },
                 {
-                    data: 'tgl_akhir_kontrak',
-                    name: 'tgl_akhir_kontrak'
+                    data: 'tanggal_order',
+                    name: 'tanggal_order'
                 },
                 {
                     data: 'action',
@@ -128,7 +125,7 @@
                     searchable: false
                 }
             ],
-        });
+        }).buttons().container().appendTo('#table-item_wrapper .col-md-6:eq(0)');
     }
 
     $(document).ready(function(){
@@ -152,7 +149,7 @@
                 //fetch to delete data
                 $.ajax({
 
-                    url: `/client/delete/${id}`,
+                    url: `/order/delete/${id}`,
                     type: "DELETE",
                     cache: false,
                     data: {
@@ -170,7 +167,7 @@
                         });
 
                         //remove post on table
-                        clientTable.ajax.reload();
+                        orderTable.ajax.reload();
                         // $(`#index_${post_id}`).remove();
                     }
                 });
@@ -179,5 +176,9 @@
             }
         });
     }
+
+    var element = document.getElementById('element-to-print');
+    html2pdf(element);
+
 </script>
 @endsection
