@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 use App\Models\Client;
 use App\Models\Order;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
         date_default_timezone_set("Asia/Jakarta");
     }
 
@@ -48,6 +50,10 @@ class OrderController extends Controller
     }
 
     public function create(){
+        if(Auth::user()->role == '0'):
+            return redirect()->route('order');
+        endif;
+
         $data['title'] = 'Add Order';
         $data['client'] = Client::orderByDesc('nama_client')->get();
         return view('content.order.create', $data);
@@ -67,6 +73,10 @@ class OrderController extends Controller
 
     public function edit(string $id)
     {
+        if(Auth::user()->role == '0'):
+            return redirect()->route('order');
+        endif;
+
         $order = Order::findOrFail($id);
         $client = Client::orderByDesc('nama_client')->get();
         $title = 'Edit Client';
@@ -92,6 +102,10 @@ class OrderController extends Controller
 
     public function delete($id)
     {
+        if(Auth::user()->role == '0'):
+            return redirect()->route('order');
+        endif;
+
         $order = Order::findOrFail($id);
         $order->delete();
 

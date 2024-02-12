@@ -26,7 +26,9 @@
 
     <!-- Main content -->
     <section class="content">
-        <a href="{{ route('order.create') }}" class="btn btn-danger mb-3"> <i class="fas fa-plus"></i> Add Order</a>
+        @if(Auth::user()->role != '0')
+            <a href="{{ route('order.create') }}" class="btn btn-danger mb-3"> <i class="fas fa-plus"></i> Add Order</a>
+        @endif
         <a href="{{ route('order.print') }}" class="btn btn-primary mb-3" target="_blank"> <i class="fas fa-pdf"></i> Import PDF</a>
 
         @if(Session::get('success'))
@@ -47,7 +49,9 @@
                                 <th>Item Name</th>
                                 <th>Price</th>
                                 <th>Order Date</th>
+                                @if(Auth::user()->role != '0')
                                 <th style="background-color: #ffffff" class="notExport noBulk">Action</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -76,26 +80,8 @@
     var orderTable;
 
     function datatable_show(){
-        orderTable = $('#table-item').DataTable({
-            // dom: 'rt<"bottom"i><"dataTable-right"flp><"clear">',
-            autoWidth: true,
-            processing: true,
-            serverSide: true,
-            "ajax": {
-                url: "{{ route('order.datatables') }}",
-                method: 'POST',
-                'beforeSend': function(request) {
-                    request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
-                    $("#loadingTable").show();
-                },
-                "error": function(jqXHR, textStatus, error) {
-                    if(jqXHR.status == 200){
-                        location.reload();
-                    }
-                }
-            },
-            buttons:  ["pdf"],
-            columns: [
+        @if(Auth::user()->role != '0')
+            var cols = [
                 {
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -124,7 +110,54 @@
                     name: 'action',
                     searchable: false
                 }
-            ],
+            ]
+        @else
+            var cols = [
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    searchable: false,
+                    visible: false
+                },
+                {
+                    data: 'nama_client',
+                    name: 'nama_client',
+                },
+                {
+                    data: 'nama_item',
+                    name: 'nama_item',
+                },
+                {
+                    data: 'harga_item',
+                    name: 'harga_item',
+                    render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp ' )
+                },
+                {
+                    data: 'tanggal_order',
+                    name: 'tanggal_order'
+                }
+            ]
+        @endif
+        orderTable = $('#table-item').DataTable({
+            // dom: 'rt<"bottom"i><"dataTable-right"flp><"clear">',
+            autoWidth: true,
+            processing: true,
+            serverSide: true,
+            "ajax": {
+                url: "{{ route('order.datatables') }}",
+                method: 'POST',
+                'beforeSend': function(request) {
+                    request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+                    $("#loadingTable").show();
+                },
+                "error": function(jqXHR, textStatus, error) {
+                    if(jqXHR.status == 200){
+                        location.reload();
+                    }
+                }
+            },
+            buttons:  ["pdf"],
+            columns: cols
         }).buttons().container().appendTo('#table-item_wrapper .col-md-6:eq(0)');
     }
 

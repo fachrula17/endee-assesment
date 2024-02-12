@@ -7,7 +7,7 @@
       <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->email }}</a>
+          <a href="#" class="d-block">{{ Auth::user()->name }} {{ Auth::user()->role }}</a>
         </div>
       </div>
 
@@ -24,9 +24,19 @@
               </p>
             </a>
           </li>
+          @if(Auth::user()->role == '2')
+          <li class="nav-item">
+            <a href="{{ route('users') }}" class="nav-link">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Users
+              </p>
+            </a>
+          </li>
+          @endif
           <li class="nav-item">
             <a href="{{ route('client') }}" class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
+              <i class="nav-icon fas fa-users"></i>
               <p>
                 Client
               </p>

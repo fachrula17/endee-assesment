@@ -26,10 +26,8 @@
 
     <!-- Main content -->
     <section class="content">
-        @if(Auth::user()->role != '0')
-            <a href="{{ route('client.create') }}" class="btn btn-danger mb-3"> <i class="fas fa-plus"></i> Add Client</a>
-        @endif
-        
+        <a href="{{ route('users.create') }}" class="btn btn-danger mb-3"> <i class="fas fa-plus"></i> Add User</a>
+
         @if(Session::get('success'))
             <p class="alert alert-success">{{ Session::get('success') }}</p>
         @endif
@@ -44,13 +42,10 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Client Name</th>
-                                <th>Client Address</th>
-                                <th>Date Start Contract</th>
-                                <th>Date End Contract</th>
-                                @if(Auth::user()->role != '0')
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
                                 <th style="background-color: #ffffff" class="notExport noBulk">Action</th>
-                                @endif
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -77,62 +72,6 @@
     var clientTable;
 
     function datatable_show(){
-        @if(Auth::user()->role != '0')
-            var cols = [
-                {
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    searchable: false,
-                    visible: false
-                },
-                {
-                    data: 'nama_client',
-                    name: 'nama_client',
-                },
-                {
-                    data: 'alamat_client',
-                    name: 'alamat_client',
-                },
-                {
-                    data: 'tgl_mulai_kontrak',
-                    name: 'tgl_mulai_kontrak',
-                },
-                {
-                    data: 'tgl_akhir_kontrak',
-                    name: 'tgl_akhir_kontrak'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    searchable: false
-                }
-            ]
-        @else
-        var cols = [
-                {
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    searchable: false,
-                    visible: false
-                },
-                {
-                    data: 'nama_client',
-                    name: 'nama_client',
-                },
-                {
-                    data: 'alamat_client',
-                    name: 'alamat_client',
-                },
-                {
-                    data: 'tgl_mulai_kontrak',
-                    name: 'tgl_mulai_kontrak',
-                },
-                {
-                    data: 'tgl_akhir_kontrak',
-                    name: 'tgl_akhir_kontrak'
-                }
-            ]
-        @endif
         clientTable = $('#table-item').DataTable({
             // dom: 'rt<"bottom"i><"dataTable-right"flp><"clear">',
             autoWidth: true,
@@ -147,7 +86,7 @@
             processing: true,
             serverSide: true,
             "ajax": {
-                url: "{{ route('client.datatables') }}",
+                url: "{{ route('users.datatables') }}",
                 method: 'POST',
                 'beforeSend': function(request) {
                     request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
@@ -159,7 +98,31 @@
                     }
                 }
             },
-            columns: cols,
+            columns: [
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    searchable: false,
+                    visible: false
+                },
+                {
+                    data: 'name',
+                    name: 'name',
+                },
+                {
+                    data: 'email',
+                    name: 'email',
+                },
+                {
+                    data: 'role_name',
+                    name: 'role_name',
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    searchable: false
+                }
+            ],
         });
     }
 
@@ -184,7 +147,7 @@
                 //fetch to delete data
                 $.ajax({
 
-                    url: `/client/delete/${id}`,
+                    url: `/users/delete/${id}`,
                     type: "DELETE",
                     cache: false,
                     data: {

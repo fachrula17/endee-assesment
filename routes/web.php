@@ -16,10 +16,17 @@ use App\Http\Middleware\Authenticate;
 
 Route::get('/', [App\Http\Controllers\Auth\LoginController::class, 'root'])->name('root');
 
-Auth::routes();
-Route::middleware([Authenticate::class])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users');
+    Route::get('/users/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
+    Route::post('/users/datatables', [App\Http\Controllers\UserController::class, 'datatables'])->name('users.datatables');
+    Route::post('/users/store', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/edit/{param}', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/update/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/delete/{id}', [App\Http\Controllers\UserController::class, 'delete'])->name('users.delete');
 
     Route::get('/client', [App\Http\Controllers\ClientController::class, 'index'])->name('client');
     Route::get('/client/create', [App\Http\Controllers\ClientController::class, 'create'])->name('client.create');
@@ -38,3 +45,5 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::delete('/order/delete/{id}', [App\Http\Controllers\OrderController::class, 'delete'])->name('order.delete');
     Route::get('/order/print', [App\Http\Controllers\OrderController::class, 'print_report'])->name('order.print');
 });
+
+Auth::routes();
